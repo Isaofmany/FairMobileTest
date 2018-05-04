@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
     private RentalAdapter adapter;
     private ListView listView;
 
-    private Location currLocat;
+    private Location currLocat, chosenLocat;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,6 +66,14 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
         return this;
     }
 
+    private void getDirect(String destLocat, boolean useCurr) {
+
+        String[] split = destLocat.split(",");
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(new String(KeyBank.DIRECTBASE).replace("000_userLocat", (useCurr ? currLocat.getLatitude() : chosenLocat.getLatitude())
+                                    + "," + (useCurr ? currLocat.getLongitude() : chosenLocat.getLongitude())).replace("000_gameLocat", split[0] + "," + split[1])));
+        startActivity(intent);
+    }
+
     @Override
     public void dropData(final String type, final String object) {
 
@@ -83,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
                         try {
                             JSONObject results = new JSONObject(object);
                             if(adapter == null) {
-                                adapter = new RentalAdapter(toPass, getDataDrop(), RentalParser.getRentals(results, currLocat), CompareBuilder.SORTPRICE);
+                                adapter = new RentalAdapter(toPass, getDataDrop(), RentalParser.getRentals(results, currLocat == null ? chosenLocat : currLocat), CompareBuilder.SORTPRICE);
                             }
                             else {
                                 adapter.setContent(RentalParser.getRentals(results, currLocat));
@@ -109,21 +117,33 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
                                 dialog = new AlertDialog.Builder(toPass).setTitle(getResources().getString(R.string.adj_data_error))
                                         .setMessage(getResources().getString(R.string.adj_data_error_msg));
                             }
+                            else if(object.equals(ResponseBank.ERRLOCAT)) {
+                                dialog = new AlertDialog.Builder(toPass).setTitle(getResources().getString(R.string.no_location))
+                                        .setMessage(getResources().getString(R.string.no_location_msg));
+                            }
+                            else {
+                                dialog = new AlertDialog.Builder(toPass).setTitle(getResources().getString(R.string.unknown_error))
+                                        .setMessage(getResources().getString(R.string.unknown_error_msg));
+                            }
+                            dialog.show();
                         }
-                        else {
-                            dialog = new AlertDialog.Builder(toPass).setTitle(getResources().getString(R.string.unknown_error))
-                                    .setMessage(getResources().getString(R.string.unknown_error_msg));
-                        }
-                        dialog.show();
                         toggleLoading(false);
                         break;
                     case CompareBuilder.SORT:
                         adapter.sort(object, false);
                         break;
+                    case ResponseBank.LOCAT:
+                            chosenLocat = null;
+                            String[] split = object.split(",");
+                            if(currLocat == null) {
+                                currLocat = new Location("");
+                            }
+                            currLocat.setLatitude(Double.valueOf(split[0]));
+                            currLocat.setLatitude(Double.valueOf(split[1]));
+                            dropData(ResponseBank.ERROR, ResponseBank.ERRLOCAT);
+                        break;
                     case ResponseBank.ADDRESS:
-                        String[] split = object.split(",");
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(new String(KeyBank.DIRECTBASE).replace("000_userLocat", currLocat.getLatitude() + "," + currLocat.getLongitude()).replace("000_gameLocat", split[0] + "," + split[1])));
-                        startActivity(intent);
+                            getDirect(object, chosenLocat == null);
                         break;
                 }
             }
@@ -139,6 +159,9 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
                     @Override
                     public void run() {
                         searchNav.setPlace(place);
+                        chosenLocat = new Location("");
+                        chosenLocat.setLatitude(place.getLatLng().latitude);
+                        chosenLocat.setLongitude(place.getLatLng().longitude);
                     }
                 });
             }

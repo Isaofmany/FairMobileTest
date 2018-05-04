@@ -44,9 +44,6 @@ public class CompareBuilder {
             if(obj0.getDistance() < obj1.getDistance()) {
                 return -1;
             }
-            else if(obj1.getDistance() > obj0.getDistance()) {
-                return 1;
-            }
             else {
                 return 1;
             }

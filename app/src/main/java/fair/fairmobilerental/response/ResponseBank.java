@@ -10,6 +10,7 @@ public class ResponseBank {
     public static final String ERROR = "error";
     public static final String ERRNORES = "500";
     public static final String ERRBADDATE = "400";
+    public static final String ERRLOCAT = "0011";
     public static final String RESULTS = "results";
     public static final String PROVIDER = "provider";
     public static final String ADDRESS = "address";

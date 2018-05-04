@@ -34,14 +34,30 @@ public class RentalParser {
 
     private static List<Rental> objectParser(JSONObject object) throws JSONException {
 
+        double lat = 0, lng = 0;
+        String company = null, address = null;
         List<Rental> rentals = new ArrayList<>();
-        String company = object.getJSONObject(ResponseBank.PROVIDER).getString(ResponseBank.COMPNAME);
-        String address = object.getJSONObject(ResponseBank.ADDRESS).getString(ResponseBank.LINE1)
-                            + "\n" + object.getJSONObject(ResponseBank.ADDRESS).getString(ResponseBank.CITY)
-                            + "\n" + object.getJSONObject(ResponseBank.ADDRESS).getString(ResponseBank.REGION)
-                            + "\n" + object.getJSONObject(ResponseBank.ADDRESS).getString(ResponseBank.COUNTRY);
-        double lat = Double.valueOf(object.getJSONObject(ResponseBank.LOCAT).getString(ResponseBank.LAT));
-        double lng = Double.valueOf(object.getJSONObject(ResponseBank.LOCAT).getString(ResponseBank.LONG));
+
+        if(object.getJSONObject(ResponseBank.PROVIDER).has(ResponseBank.COMPNAME)) {
+            company = object.getJSONObject(ResponseBank.PROVIDER).getString(ResponseBank.COMPNAME);
+        }
+
+        try {
+            address = object.getJSONObject(ResponseBank.ADDRESS).getString(ResponseBank.LINE1)
+                                + "\n" + object.getJSONObject(ResponseBank.ADDRESS).getString(ResponseBank.CITY)
+                                + "\n" + object.getJSONObject(ResponseBank.ADDRESS).getString(ResponseBank.REGION)
+                                + "\n" + object.getJSONObject(ResponseBank.ADDRESS).getString(ResponseBank.COUNTRY);
+        }
+        catch (JSONException e) {
+        }
+        catch (Exception e) {
+        }
+
+        if(object.getJSONObject(ResponseBank.LOCAT).has(ResponseBank.LAT)
+                && object.getJSONObject(ResponseBank.LOCAT).has(ResponseBank.LONG)) {
+            lat = Double.valueOf(object.getJSONObject(ResponseBank.LOCAT).getString(ResponseBank.LAT));
+            lng = Double.valueOf(object.getJSONObject(ResponseBank.LOCAT).getString(ResponseBank.LONG));
+        }
 
         JSONArray cars = object.getJSONArray(ResponseBank.CARS);
 

@@ -203,6 +203,7 @@ public class SearchNav extends LinearLayout implements View.OnClickListener {
                 if(currLoc != null) {
                     location.setText(String.valueOf(currLoc.getLatitude() + ", " + currLoc.getLongitude()));
                     place = null;
+                    drop.dropData(ResponseBank.LOCAT, currLoc.toString());
                 }
                 break;
             case R.id.pick_up:
