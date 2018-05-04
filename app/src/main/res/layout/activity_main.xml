@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <RelativeLayout
+        android:id="@+id/progress_lay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="visible">
+        <ProgressBar
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:progressDrawable="@drawable/loading_spinner"/>
+    </RelativeLayout>
+
+    <fair.fairmobilerental.ui.ToolBar
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+        <include layout="@layout/tool_bar"/>
+    </fair.fairmobilerental.ui.ToolBar>
+
+    <fair.fairmobilerental.ui.SearchNav
+        android:id="@+id/search_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/dim1"
+        android:layout_below="@+id/tool_bar"
+        android:layout_marginTop="@dimen/dim1">
+        <include layout="@layout/search_nav"/>
+    </fair.fairmobilerental.ui.SearchNav>
+
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_nav"
+        android:background="@color/colorPrimaryDark"/>
+</RelativeLayout>

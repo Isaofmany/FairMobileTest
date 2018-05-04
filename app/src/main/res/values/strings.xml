@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">FairMobileRental</string>
+
+    <!--Resources-->
+    <string name="api_key">cDpAfLfOSh3exPddelnW8uUGfOArnOuH</string>
+    <string name="gms_api_key">AIzaSyBrsmIyqmRjFNVH-7m3tSbi-BMyu1TiA_4</string>
+
+    <!--Currency used can be changed using resources from version to version-->
+    <string name="currency_symbol">$</string>
+
+    <!--Titles and Messages-->
+    <string name="adj_date_error">Incorrect Dates</string>
+    <string name="adj_date_error_msg">Your pickup or dropoff date is invalid.</string>
+    <string name="adj_data_error">No vehicles found</string>
+    <string name="adj_data_error_msg">Try adjusting your pickup, dropoff date, or pickup location.</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="unknown_error_msg">An unknown error has occured...please try again later....definitely not the programmers fault </string>
+    <string name="no_perm_locat">Location Access Needed</string>
+    <string name="no_perm_locat_msg">Please give me permission to access your location...</string>
+    <string name="no_location">Location Not Available</string>
+    <string name="no_location_msg">Your location could not be found, \n please check your connectivity</string>
+
+    <!--Fields-->
+    <string name="enter_location">Enter a location</string>
+    <string name="enter_pickup">Enter pickup date</string>
+    <string name="enter_dropoff">Enter dropoff date</string>
+    <string name="search">Search</string>
+    <string name="positive_click">Sure!</string>
+    <string name="negative_click">No Thanks</string>
+    <string name="get_direct">Get Directions</string>
+</resources>
