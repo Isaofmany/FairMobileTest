@@ -101,11 +101,11 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
                         AlertDialog.Builder dialog = null;
 
                         if(object != null) {
-                            if(object.equals(ResponseBank.ERRNORES)) {
+                            if(object.equals(ResponseBank.ERRBADDATE)) {
                                 dialog = new AlertDialog.Builder(toPass).setTitle(getResources().getString(R.string.adj_date_error))
                                         .setMessage(getResources().getString(R.string.adj_date_error_msg));
                             }
-                            else if(object.equals(ResponseBank.ERRBADDATE)){
+                            else if(object.equals(ResponseBank.ERRNORES)){
                                 dialog = new AlertDialog.Builder(toPass).setTitle(getResources().getString(R.string.adj_data_error))
                                         .setMessage(getResources().getString(R.string.adj_data_error_msg));
                             }
