@@ -64,6 +64,8 @@ public class SearchNav extends LinearLayout implements View.OnClickListener {
     private ImageView myLocat;
     private Button search;
 
+    private boolean requestedLoc;
+
     public SearchNav(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
@@ -83,11 +85,22 @@ public class SearchNav extends LinearLayout implements View.OnClickListener {
         actionDown.setVisibility(VISIBLE);
     }
 
-
     public void setPlace(Place place) {
         this.place = place;
         currLoc = null;
         location.setText(place.getName().toString());
+    }
+
+    public void setCurrLoc(Location currLoc) {
+        if(requestedLoc) {
+            this.currLoc = currLoc;
+            if(currLoc != null) {
+                location.setText(String.valueOf(currLoc.getLatitude() + ", " + currLoc.getLongitude()));
+                place = null;
+            }
+            requestedLoc = !requestedLoc;
+        }
+
     }
 
     private void initUi() {
@@ -135,48 +148,6 @@ public class SearchNav extends LinearLayout implements View.OnClickListener {
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
     }
 
-    public Location getLocat() {
-
-        Location loc = null;
-//        With next version move this check to separate method or class
-
-        if(PermissionChecker.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED
-                || PermissionChecker.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-
-            AlertDialog.Builder noLocation = new AlertDialog.Builder(getContext()).setTitle(getContext().getString(R.string.no_location))
-                    .setMessage(getContext().getString(R.string.no_location_msg));
-            noLocation.setPositiveButton(getContext().getString(R.string.positive_click), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ActivityCompat.requestPermissions(activity, new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION }, 0);
-                }
-            }).setNegativeButton(getContext().getString(R.string.negative_click), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            }).setCancelable(false);
-
-            noLocation.show();
-            return null;
-        }
-
-        locatManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        if(locatManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locatManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            if (locatManager.getBestProvider(criteria, true).equals(LocationManager.GPS_PROVIDER)) {
-                loc = locatManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }
-            if(loc == null) {
-                loc = locatManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            }
-        }
-        return loc;
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -196,12 +167,8 @@ public class SearchNav extends LinearLayout implements View.OnClickListener {
                 }
                 break;
             case R.id.my_loc:
-                currLoc = getLocat();
-                if(currLoc != null) {
-                    location.setText(String.valueOf(currLoc.getLatitude() + ", " + currLoc.getLongitude()));
-                    place = null;
-                    drop.dropData(ResponseBank.LOCAT, currLoc.toString());
-                }
+                drop.dropData(KeyBank.LOCREQ, null);
+                requestedLoc = true;
                 break;
             case R.id.pick_up:
                 pickUpPicker.show();
@@ -220,7 +187,7 @@ public class SearchNav extends LinearLayout implements View.OnClickListener {
 
                     Bundle bundle = new Bundle();
 
-                    if(currLoc != null) {
+                    if(place == null) {
                         bundle.putString(ResponseBank.LAT, String.valueOf(currLoc.getLatitude()));
                         bundle.putString(ResponseBank.LONG, String.valueOf(currLoc.getLongitude()));
                     }

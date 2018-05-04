@@ -2,6 +2,7 @@ package fair.fairmobilerental;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fair.fairmobilerental.request.location.LocationHandler;
 import fair.fairmobilerental.response.RentalParser;
 import fair.fairmobilerental.response.ResponseBank;
 import fair.fairmobilerental.tools.CompareBuilder;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
     private RentalAdapter adapter;
     private ListView listView;
 
+    private LocationHandler locHandler;
     private Location currLocat, chosenLocat;
 
     @Override
@@ -55,7 +58,9 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
         toolBar.build(this);
         searchNav.build(this, this);
 
-        currLocat = searchNav.getLocat();
+        if(LocationHandler.getLocatPermit(this) == PackageManager.PERMISSION_GRANTED) {
+            locHandler = new LocationHandler(this, this);
+        }
     }
 
     private void toggleLoading(boolean show) {
@@ -132,6 +137,9 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
                     case CompareBuilder.SORT:
                         adapter.sort(object, false);
                         break;
+                    case KeyBank.LOCREQ:
+                        dropData(ResponseBank.LOCAT, locHandler.getCurrLatLng().toString());
+                        break;
                     case ResponseBank.LOCAT:
                             chosenLocat = null;
                             String[] split = object.split(",");
@@ -139,8 +147,8 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
                                 currLocat = new Location("");
                             }
                             currLocat.setLatitude(Double.valueOf(split[0]));
-                            currLocat.setLatitude(Double.valueOf(split[1]));
-                            dropData(ResponseBank.ERROR, ResponseBank.ERRLOCAT);
+                            currLocat.setLongitude(Double.valueOf(split[1]));
+                            searchNav.setCurrLoc(currLocat);
                         break;
                     case ResponseBank.ADDRESS:
                             getDirect(object, chosenLocat == null);
@@ -172,6 +180,6 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
 //        Only one app permission is requested, check for others when more needed
-        currLocat = searchNav.getLocat();
+        locHandler = new LocationHandler(this, this);
     }
 }
