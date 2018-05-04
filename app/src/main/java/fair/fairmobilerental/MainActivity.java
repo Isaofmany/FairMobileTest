@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity implements DataDrop<String> 
                         adapter.sort(object, false);
                         break;
                     case ResponseBank.ADDRESS:
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(object));
+                        String[] split = object.split(",");
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(new String(KeyBank.DIRECTBASE).replace("000_userLocat", currLocat.getLatitude() + "," + currLocat.getLongitude()).replace("000_gameLocat", split[0] + "," + split[1])));
                         startActivity(intent);
                         break;
                 }
