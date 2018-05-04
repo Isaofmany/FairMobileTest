@@ -137,6 +137,7 @@ public class SearchNav extends LinearLayout implements View.OnClickListener {
 
     public Location getLocat() {
 
+        Location loc = null;
 //        With next version move this check to separate method or class
 
         if(PermissionChecker.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED
@@ -167,17 +168,13 @@ public class SearchNav extends LinearLayout implements View.OnClickListener {
         if(locatManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locatManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             if (locatManager.getBestProvider(criteria, true).equals(LocationManager.GPS_PROVIDER)) {
-                return locatManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            } else {
-                return locatManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                loc = locatManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
+            if(loc == null) {
+                loc = locatManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             }
         }
-        else {
-            AlertDialog.Builder noLocation = new AlertDialog.Builder(getContext()).setTitle(getContext().getString(R.string.no_location))
-                                                                                    .setMessage(getContext().getString(R.string.no_location_msg));
-            noLocation.show();
-            return null;
-        }
+        return loc;
     }
 
     @Override
